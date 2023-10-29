@@ -37,6 +37,7 @@ class UserResponse(BaseModel):
     username: str
     role_id: int
     register_date: datetime
+    disabled: bool | None = None
 
 
 class RoleResponse(BaseModel):

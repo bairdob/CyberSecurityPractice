@@ -1,21 +1,23 @@
+from pathlib import Path
 from typing import Annotated
-from fastapi import FastAPI, Depends, HTTPException, status
+
+from fastapi import FastAPI, Depends, HTTPException, status, Request
+from fastapi.responses import HTMLResponse
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
-from src.database import SessionLocal
+from src.database import get_db
 from src.models import User, UserResponse, Role, RoleResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 app = FastAPI()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+app.mount("/static", StaticFiles(directory=str(Path(BASE_DIR, 'static'))), name="static")
+templates = Jinja2Templates(directory=str(Path(BASE_DIR, 'templates')))
 
 
 def fake_decode_token(token, db: Session):
@@ -76,3 +78,8 @@ def get_all_users(skip: int = 0, limit: int = 10, db: Session = Depends(get_db))
 def get_all_roles(db: Session = Depends(get_db)):
     roles = db.query(Role).all()
     return roles
+
+
+@app.get("/", response_class=HTMLResponse)
+async def index(request: Request):
+    return templates.TemplateResponse("index.html", context={"request": request})

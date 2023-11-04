@@ -10,7 +10,6 @@ from sqlalchemy.orm import Session
 
 from src.database import get_db
 from src.models import User, UserResponse, Role, RoleResponse
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -50,7 +49,6 @@ def verify_user(username: str, password: str, db: Session):
 
 def verify_user_by_token(token: str, db: Session):
     user = db.query(User).filter(User.username == token).first()
-    # user = TypeAdapter(UserResponse).validate_python(user)
     return user
 
 

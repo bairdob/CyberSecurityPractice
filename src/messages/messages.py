@@ -1,0 +1,27 @@
+from typing import Optional, Type
+
+from sqlalchemy.orm import Session
+
+from gost.GOST import GOST
+from gost.utils import hex_to_bin_mult_64, bytes_to_string
+from src.auth import User
+from src.messages.constants import SUPER_SECRET_KEY
+from src.messages.models import Message
+
+
+def by_message_id_and_user_id(db: Session, message_id: int, user_id: int) -> Optional[Message]:
+    return db.query(Message).join(User).filter(User.user_id == user_id, Message.message_id == message_id).first()
+
+
+def all_messages(db: Session) -> list[Type[Message]]:
+    return db.query(Message).all()
+
+
+def decrypt(message: Message) -> str:
+    gost = GOST()
+    gost.set_key(SUPER_SECRET_KEY)
+    gost.set_operation_mode(gost.CFB)
+    gost.set_iv(hex_to_bin_mult_64(message.iv))
+    gost.set_encrypted_msg(hex_to_bin_mult_64(message.encrypted_message))
+    result = bytes_to_string(gost.decrypt())
+    return result

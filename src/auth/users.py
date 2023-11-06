@@ -10,6 +10,6 @@ def get_by_token(db: Session, token: str):
 
 
 def get_user_from_token(request: Request, db: Session = Depends(get_db)):
-    token = request.cookies.get("authorization").split()[-1]
+    token = request.headers.get("authorization").split()[-1]
     user = get_by_token(db, token)
     return user

@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from src.auth.users import get_user_from_token
 from src.database import get_db
 from src.messages import messages
-from src.messages.models import MessageResponse
+from src.messages.models import MessageResponse, MessageDecryptedResponse
 
 router = APIRouter()
 
@@ -33,7 +33,7 @@ async def get_message(message_id: int, db: Session = Depends(get_db), user=Depen
     return message
 
 
-@router.get("/messages/{message_id}/decrypt", response_model=MessageResponse)
+@router.get("/messages/{message_id}/decrypt", response_model=MessageDecryptedResponse)
 async def decrypt_message(message_id: int, db: Session = Depends(get_db), user=Depends(get_user_from_token)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")

@@ -16,6 +16,11 @@ class Message(Base):
 
 
 class MessageResponse(BaseModel):
+    user_id: int
+    message_id: int
+    encrypted_message: str
+
+
+class MessageDecryptedResponse(BaseModel):
     message_id: int
     decrypted_message: str
-

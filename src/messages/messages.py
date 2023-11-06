@@ -3,10 +3,10 @@ from typing import Optional, Type
 from sqlalchemy.orm import Session
 
 from gost.GOST import GOST
-from gost.utils import hex_to_bin_mult_64, bytes_to_string
+from gost.utils import hex_to_bin_mult_64, bytes_to_string, string_to_bytes, leading_zeros_hex
 from src.auth import User
 from src.messages.constants import SUPER_SECRET_KEY
-from src.messages.models import Message
+from src.messages.models import Message, MessageIn
 
 
 def by_message_id_and_user_id(db: Session, message_id: int, user_id: int) -> Optional[Message]:
@@ -25,3 +25,13 @@ def decrypt(message: Message) -> str:
     gost.set_encrypted_msg(hex_to_bin_mult_64(message.encrypted_message))
     result = bytes_to_string(gost.decrypt())
     return result
+
+
+def encrypt(message: MessageIn) -> tuple[str, str]:
+    gost = GOST()
+    gost.set_message(string_to_bytes(message.message_text))
+    gost.set_key(SUPER_SECRET_KEY)
+    gost.set_operation_mode(gost.CFB)
+    ciphertext = leading_zeros_hex(gost.encrypt())
+    iv = leading_zeros_hex(gost.get_iv())
+    return ciphertext, iv

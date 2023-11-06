@@ -24,3 +24,14 @@ class MessageResponse(BaseModel):
 class MessageDecryptedResponse(BaseModel):
     message_id: int
     decrypted_message: str
+
+
+class MessageCreate(BaseModel):
+    user_id: int
+    message_text: str
+    encrypted_message: str
+    iv: str
+
+
+class MessageIn(BaseModel):
+    message_text: str

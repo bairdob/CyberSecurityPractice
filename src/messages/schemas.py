@@ -2,7 +2,6 @@ from pydantic import BaseModel
 
 
 class MessageResponse(BaseModel):
-    user_id: int
     message_id: int
     encrypted_message: str
 

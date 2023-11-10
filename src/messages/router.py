@@ -15,7 +15,7 @@ async def get_messages(db: Session = Depends(get_db), user=Depends(get_user_from
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    message = messages.all_messages(db)
+    message = messages.all_messages(db, user)
     if not message:
         raise HTTPException(status_code=404, detail="Messages not found")
 

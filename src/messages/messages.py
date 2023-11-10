@@ -14,8 +14,8 @@ def by_message_id_and_user_id(db: Session, message_id: int, user_id: int) -> Opt
     return db.query(Message).join(User).filter(User.user_id == user_id, Message.message_id == message_id).first()
 
 
-def all_messages(db: Session) -> list[Type[Message]]:
-    return db.query(Message).all()
+def all_messages(db: Session, user: User) -> list[Type[Message]]:
+    return db.query(Message).filter(Message.user_id == user.user_id).all()
 
 
 def decrypt(message: Message) -> str:

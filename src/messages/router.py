@@ -27,7 +27,7 @@ async def get_message(message_id: int, db: Session = Depends(get_db), user=Depen
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    message = messages.by_message_id_and_user_id(db, message_id, user.user_id)
+    message = messages.by_message_id(db, message_id)
     if not message:
         raise HTTPException(status_code=404, detail=f"Message with 'message_id={message_id}' not found")
 
@@ -38,8 +38,10 @@ async def get_message(message_id: int, db: Session = Depends(get_db), user=Depen
 async def decrypt_message(message_id: int, db: Session = Depends(get_db), user=Depends(get_user_from_token)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+    if user.role_id != Roles.DECRYPTOR.value:
+        raise HTTPException(status_code=403, detail="User not have permissions to decrypt messages")
 
-    message = messages.by_message_id_and_user_id(db, message_id, user.user_id)
+    message = messages.by_message_id(db, message_id)
     if not message:
         raise HTTPException(status_code=404, detail=f"Message with 'message_id={message_id}' not found")
 

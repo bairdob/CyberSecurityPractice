@@ -9,6 +9,8 @@ from sqlalchemy.orm import Session
 from src.auth import router as auth_router
 from src.auth import users
 from src.auth.models import User, UserResponse, Role, RoleResponse
+from src.auth.models import User, Role
+from src.auth.schemas import UserResponse, RoleResponse
 from src.database import get_db
 from src.messages import router as messages_router
 from src.messages.models import Message

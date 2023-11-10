@@ -1,7 +1,4 @@
-from datetime import datetime
-
-from pydantic import BaseModel
-from sqlalchemy import Column, Integer, String, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, ForeignKey, Text
 from sqlalchemy.orm import relationship
 
 from src.database import Base
@@ -23,14 +20,9 @@ class User(Base):
     role = relationship('Role', backref='users')
 
 
-class UserResponse(BaseModel):
-    user_id: int
-    username: str
-    role_id: int
-    register_date: datetime
-    disabled: bool | None = None
-
-
-class RoleResponse(BaseModel):
-    role_id: int
-    role_name: str
+class Password(Base):
+    __tablename__ = 'hashed_passwords'
+    password_id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
+    hashed_password = Column(Text, nullable=False)
+    user = relationship('User', backref='hashed_passwords')

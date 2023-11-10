@@ -6,7 +6,8 @@ from gost.GOST import GOST
 from gost.utils import hex_to_bin_mult_64, bytes_to_string, string_to_bytes, leading_zeros_hex
 from src.auth import User
 from src.messages.constants import SUPER_SECRET_KEY
-from src.messages.models import Message, MessageIn
+from src.messages.models import Message
+from src.messages.schemas import MessageIn
 
 
 def by_message_id_and_user_id(db: Session, message_id: int, user_id: int) -> Optional[Message]:

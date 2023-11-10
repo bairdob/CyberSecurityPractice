@@ -4,7 +4,8 @@ from sqlalchemy.orm import Session
 from src.auth.users import get_user_from_token
 from src.database import get_db
 from src.messages import messages
-from src.messages.models import MessageResponse, MessageDecryptedResponse, MessageIn, MessageCreate, Message
+from src.messages.models import Message
+from src.messages.schemas import MessageResponse, MessageDecryptedResponse, MessageCreate, MessageIn
 
 router = APIRouter()
 

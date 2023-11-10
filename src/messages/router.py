@@ -1,4 +1,4 @@
-from fastapi import Depends, APIRouter, HTTPException
+from fastapi import Depends, APIRouter, HTTPException, Response
 from sqlalchemy.orm import Session
 
 from src.auth.schemas import Roles
@@ -7,6 +7,7 @@ from src.database import get_db
 from src.messages import messages
 from src.messages.models import Message
 from src.messages.schemas import MessageResponse, MessageDecryptedResponse, MessageCreate, MessageIn
+from src.messages.utils import create_PDF
 
 router = APIRouter()
 
@@ -21,6 +22,18 @@ async def get_messages(db: Session = Depends(get_db), user=Depends(get_user_from
         raise HTTPException(status_code=404, detail="Messages not found")
 
     return message
+
+
+@router.get('/messages/pdf')
+async def get_pdf(db: Session = Depends(get_db), user=Depends(get_user_from_token)):
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    data = messages.all_messages(db, user)
+
+    out = create_PDF(data, user)
+    headers = {'Content-Disposition': 'inline; filename="out.pdf"'}
+    return Response(bytes(out), headers=headers, media_type='application/pdf')
 
 
 @router.get("/messages/{message_id}", response_model=MessageResponse)

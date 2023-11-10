@@ -69,6 +69,8 @@ async def decrypt_message(message_id: int, db: Session = Depends(get_db), user=D
 async def create_message(message: MessageIn, db: Session = Depends(get_db), user=Depends(get_user_from_token)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+    if user.role_id != Roles.ENCRYPTOR.value:
+        raise HTTPException(status_code=403, detail="User not have permissions to encrypt message")
 
     ciphertext, iv = messages.encrypt(message)
     db_message = MessageCreate(
@@ -79,4 +81,4 @@ async def create_message(message: MessageIn, db: Session = Depends(get_db), user
     db.commit()
     db.refresh(db_message)
 
-    return db_message.encrypted_message
+    return {"encrypted_message": db_message.encrypted_message}

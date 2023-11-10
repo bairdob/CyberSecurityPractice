@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from enum import Enum
 
 from fastapi import Form
 from pydantic import BaseModel
@@ -23,3 +24,9 @@ class UserResponse(BaseModel):
 class RoleResponse(BaseModel):
     role_id: int
     role_name: str
+
+
+class Roles(Enum):
+    VIEWER = 1
+    ENCRYPTOR = 2
+    DECRYPTOR = 3

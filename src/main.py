@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from fastapi import FastAPI, Depends, Request, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -9,10 +9,12 @@ from sqlalchemy.orm import Session
 from src.auth import router as auth_router
 from src.auth import users
 from src.auth.models import User, Role
-from src.auth.schemas import UserResponse, RoleResponse
+from src.auth.schemas import UserResponse, RoleResponse, Roles
 from src.database import get_db
 from src.messages import router as messages_router
+from src.messages.messages import decrypt
 from src.messages.models import Message
+from src.messages.schemas import MessageOut
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -55,12 +57,26 @@ async def index(request: Request):
 
 @app.get("/messages", response_class=HTMLResponse)
 async def index(request: Request, db: Session = Depends(get_db)):
-    messages = db.query(Message).all()
     token = request.headers.get("authorization").split()[-1]
+
     user = users.get_by_token(db, token)
     if not user:
         raise HTTPException(status_code=401, detail="Invalid token")
 
+    messages = db.query(Message).all()
+
+    if user.role_id == Roles.DECRYPTOR.value:
+        messages = [
+            MessageOut(
+                message_id=message.message_id,
+                encrypted_message=message.encrypted_message,
+                decrypted_message=decrypt(message))
+            for message in messages
+        ]
+
+    user_role = users.get_role_name(user.role_id)
+
     return templates.TemplateResponse(
         name="messages.html",
-        context={"request": request, "token": token, "messages": messages})
+        context={"request": request, "token": token, "messages": messages, "user_role": user_role})
+

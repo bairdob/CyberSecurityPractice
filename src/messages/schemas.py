@@ -13,10 +13,15 @@ class MessageDecryptedResponse(BaseModel):
 
 class MessageCreate(BaseModel):
     user_id: int
-    message_text: str
     encrypted_message: str
     iv: str
 
 
 class MessageIn(BaseModel):
     message_text: str
+
+
+class MessageOut(BaseModel):
+    message_id: int
+    encrypted_message: str
+    decrypted_message: str

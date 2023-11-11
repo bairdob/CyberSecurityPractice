@@ -74,7 +74,7 @@ async def create_message(message: MessageIn, db: Session = Depends(get_db), user
 
     ciphertext, iv = messages.encrypt(message)
     db_message = MessageCreate(
-        user_id=user.user_id, message_text=message.message_text, encrypted_message=ciphertext, iv=iv)
+        user_id=user.user_id, encrypted_message=ciphertext, iv=iv)
 
     db_message = Message(**db_message.dict())
     db.add(db_message)

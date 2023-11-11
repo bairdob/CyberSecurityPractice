@@ -12,6 +12,7 @@
 
 - **Бэкенд:** Python 3 + FastAPI
 - **Фронтенд:** Шаблонизатор Jinja2 + JavaScript
+- **База Данных:** PostgreSQL
 - **Двухфакторная авторизация:** pyotp + код из приложения (Google Authenticator)
 
 ### ER-диаграмма

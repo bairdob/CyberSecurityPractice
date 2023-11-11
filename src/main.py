@@ -32,8 +32,8 @@ async def ping():
 # Get all users
 @app.get("/users", response_model=list[UserResponse])
 def get_all_users(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    users = db.query(User).offset(skip).limit(limit).all()
-    return users
+    users_data = db.query(User).offset(skip).limit(limit).all()
+    return users_data
 
 
 @app.get("/roles", response_model=list[RoleResponse])
@@ -42,9 +42,15 @@ def get_all_roles(db: Session = Depends(get_db)):
     return roles
 
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/")
+async def index():
+    # Redirect to the login route
+    return RedirectResponse(url="/login", status_code=303)
+
+
+@app.get("/login", response_class=HTMLResponse)
 async def index(request: Request):
-    return templates.TemplateResponse("index.html", context={"request": request})
+    return templates.TemplateResponse("login.html", context={"request": request})
 
 
 @app.get("/messages", response_class=HTMLResponse)

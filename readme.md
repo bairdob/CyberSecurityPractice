@@ -12,7 +12,7 @@
 
 - **Бэкенд:** Python 3 + FastAPI
 - **Фронтенд:** Шаблонизатор Jinja2 + JavaScript
-- **Двухфакторная авторизация:** код из приложения (Google Authenticator)
+- **Двухфакторная авторизация:** pyotp + код из приложения (Google Authenticator)
 
 ### ER-диаграмма
 

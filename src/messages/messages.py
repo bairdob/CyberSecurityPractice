@@ -24,7 +24,7 @@ def decrypt(message: Message) -> str:
     gost.set_operation_mode(gost.CFB)
     gost.set_iv(hex_to_bin_mult_64(message.iv))
     gost.set_encrypted_msg(hex_to_bin_mult_64(message.encrypted_message))
-    result = bytes_to_string(gost.decrypt())
+    result = bytes_to_string(gost.decrypt()).replace('\x00', '')
     return result
 
 

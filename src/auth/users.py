@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from src.auth.constants import SALT
 from src.auth.models import User, Password
+from src.auth.schemas import Roles
 from src.database import get_db
 
 
@@ -28,3 +29,10 @@ def calc_hash_password(password: str, user: User) -> str:
 def get_hashed_password(db: Session, user: User) -> str:
     result = db.query(Password).filter(Password.user_id == user.user_id).first()
     return result.hashed_password
+
+
+def get_role_name(role_id: int):
+    for role in Roles:
+        if role.value == role_id:
+            return role.name.lower()
+    return None

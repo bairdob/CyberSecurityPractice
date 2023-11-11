@@ -14,7 +14,7 @@ def by_message_id(db: Session, message_id: int) -> Optional[Message]:
     return db.query(Message).join(User).filter(Message.message_id == message_id).first()
 
 
-def all_messages(db: Session, user: User) -> list[Type[Message]]:
+def all_messages(db: Session) -> list[Type[Message]]:
     return db.query(Message).all()
 
 

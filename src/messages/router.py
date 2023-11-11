@@ -17,7 +17,7 @@ async def get_messages(db: Session = Depends(get_db), user=Depends(get_user_from
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    message = messages.all_messages(db, user)
+    message = messages.all_messages(db)
     if not message:
         raise HTTPException(status_code=404, detail="Messages not found")
 
@@ -29,7 +29,7 @@ async def get_pdf(db: Session = Depends(get_db), user=Depends(get_user_from_toke
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    data = messages.all_messages(db, user)
+    data = messages.all_messages(db)
 
     out = create_PDF(data, user)
     headers = {'Content-Disposition': 'inline; filename="out.pdf"'}

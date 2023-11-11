@@ -1,5 +1,6 @@
 from typing import Annotated
 
+import pyotp
 from fastapi import Depends, HTTPException, APIRouter
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -21,6 +22,10 @@ async def read_users_me(current_user: Annotated[User, Depends(get_current_user)]
 @router.post("/token")
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)):
     user = verify_user(form_data.username, db)
+
+    totp_code = pyotp.TOTP(user.totp_secret).now()
+    if totp_code != form_data.client_secret:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
 
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")

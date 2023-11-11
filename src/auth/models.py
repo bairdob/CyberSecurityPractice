@@ -17,6 +17,7 @@ class User(Base):
     password = Column(String(255), nullable=False)
     role_id = Column(Integer, ForeignKey('roles.role_id'), nullable=False)
     register_date = Column(Date, nullable=False)
+    totp_secret = Column(String, nullable=True)
     role = relationship('Role', backref='users')
 
 
